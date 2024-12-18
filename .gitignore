@@ -1,0 +1,9 @@
+.env
+tempCodeRunnerFile.py
+.gradio
+/images/**
+/chroma_db_*/**
+/results/**
+/slides/**
+**/__pycache__/**
+test_rag.ipynb
