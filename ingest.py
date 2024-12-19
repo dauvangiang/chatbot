@@ -97,12 +97,12 @@ pdf_files = os.listdir(doc_path)
 for pdf_file in pdf_files:
     loader = PyPDFLoader(doc_path+pdf_file)
     loaded_docs = loader.load()
-    print(f"Loaded documents for {pdf_file}: {len(loaded_docs)}")
+    # print(f"Loaded documents for {pdf_file}: {len(loaded_docs)}")
     docs.extend(loaded_docs)
 
-print("========Docs========")
-for doc in docs:
-    print(doc.page_content[:100])
+# print("========Docs========")
+# for doc in docs:
+    # print(doc.page_content[:100])
 
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=100)
 splits = text_splitter.split_documents(docs)
@@ -113,3 +113,5 @@ vectorstore_text_mmembd.add_documents(documents=splits)
 
 # Add images with image embedding
 vectorstore_image_mmembd.add_images(uris=image_uris, embedding=image_embedding) # Use OpenCLIP embedding here
+
+print("done!!!!!!!!!!!")

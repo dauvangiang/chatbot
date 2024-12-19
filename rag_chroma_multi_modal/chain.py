@@ -12,13 +12,14 @@ from langchain_chroma import Chroma
 # from langchain_community.chat_models import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.documents import Document
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.pydantic_v1 import BaseModel
 from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 from langchain_experimental.open_clip import OpenCLIPEmbeddings
 from PIL import Image
 from langchain_community.embeddings import SentenceTransformerEmbeddings
+from langchain.memory import ConversationBufferMemory
 
 def resize_base64_image(base64_string, size=(128, 128)):
     """
@@ -51,7 +52,6 @@ def get_resized_images(docs):
         b64_images.append(resized_image)
     return {"images": b64_images}
 
-
 def img_prompt_func(data_dict, num_images=2):
     """
     GPT-4V prompt for image analysis.
@@ -63,7 +63,6 @@ def img_prompt_func(data_dict, num_images=2):
     messages = []
     ref_images = []
     if data_dict["context"]["images"]:
-        # for image in data_dict["context"]["images"][:num_images]:
         for image in data_dict["context"]["images"]["images"]:
             image_message = {
                 "type": "image_url",
@@ -72,12 +71,20 @@ def img_prompt_func(data_dict, num_images=2):
             messages.append(image_message)
             ref_images.append(image)
 
+    # Add chat history to the prompt
+    chat_history = data_dict.get("chat_history", [])
+    for message in chat_history:
+        if isinstance(message, HumanMessage):
+           messages.append({"type": "text", "text": f"User: {message.content}"})
+        elif isinstance(message, AIMessage):
+            messages.append({"type": "text", "text": f"Assistant: {message.content}"})
+
     text_message = {
         "type": "text",
         "text": (
             "Bạn là một chuyên gia phân tích, nhiệm vụ của bạn là trả lời các câu hỏi về nội dung trực quan.\n"
             "Bạn sẽ được cung cấp một hoặc nhiều hình ảnh từ một bộ slide trình bày.\n"
-            f"Bạn có thể có thêm thông tin từ văn bản của bộ slide đó. Hãy sử dụng tất cả thông tin có sẵn để trả lời câu hỏi của người dùng.\n"
+            f"Bạn có thể có thêm thông tin từ văn bản của bộ slide đó. Hãy sử dụng tất cả thông tin có sẵn và lịch sử trò chuyện để trả lời câu hỏi của người dùng.\n"
             "Câu hỏi của người dùng sẽ là một câu hỏi dạng văn bản hoặc câu hỏi trắc nghiệm và định dạng đầu ra mong đợi như sau:\n"
             '''
             ```response
@@ -109,7 +116,7 @@ def answer_text2dict(text):
     return parsed_dict
 
 
-def multi_modal_rag_chain(retriever_text, retriever_image):
+def multi_modal_rag_chain(retriever_text, retriever_image, memory):
     """
     Multi-modal RAG chain,
 
@@ -130,6 +137,7 @@ def multi_modal_rag_chain(retriever_text, retriever_image):
                "texts": retriever_text,
            },
             "question": RunnablePassthrough(),
+            "chat_history": RunnableLambda(lambda x: memory.load_memory_variables(inputs=x)['history']),
         }
         | RunnableLambda(img_prompt_func)
         | {'answer': itemgetter('prompt') | model | StrOutputParser() | parse_section, 
@@ -161,8 +169,12 @@ vectorstore_image_mmembd = Chroma(
 # Make retriever image
 retriever_image_mmembd = vectorstore_image_mmembd.as_retriever()
 
+# Initialize memory
+memory = ConversationBufferMemory(return_messages=True)
+
+
 # Create RAG chain
-chain = multi_modal_rag_chain(retriever_text_mmembd, retriever_image_mmembd)
+chain = multi_modal_rag_chain(retriever_text_mmembd, retriever_image_mmembd, memory)
 
 
 # Add typing for input

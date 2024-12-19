@@ -2,7 +2,7 @@ from dotenv import find_dotenv, load_dotenv
 
 load_dotenv(find_dotenv(usecwd=True))
 
-from rag_chroma_multi_modal.chain import chain
+from rag_chroma_multi_modal.chain import chain, memory
 from langchain_core.runnables import RunnableLambda
 import re
 
@@ -21,6 +21,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+async def startup_event():
+    memory.clear()
+
 @app.get("/")
 async def redirect_root_to_docs():
     return RedirectResponse("/docs")
@@ -30,9 +34,11 @@ add_routes(app, chain)
 @app.post("/gen_answer")
 async def gen_answer(text: str):
     try:
-        return chain.invoke(text)
+        response = chain.invoke(text)
+        memory.save_context({"input": text}, {"output": response["answer"]})
+        return response
     except Exception as e:
-        raise HTTPException(status_code=400, detail="Failed to generate answer. Please try again later!")
+        raise HTTPException(status_code=400, detail=f"Failed to generate answer. Please try again later! Error: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
