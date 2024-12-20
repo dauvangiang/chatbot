@@ -21,3 +21,4 @@ torch
 whisper
 pyttsx3
 pyaudio
+gtts
