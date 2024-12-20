@@ -18,4 +18,6 @@ Unidecode
 langserve[all]
 pillow
 torch
-
+whisper
+pyttsx3
+pyaudio

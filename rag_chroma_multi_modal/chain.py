@@ -9,26 +9,18 @@ import re
 from operator import itemgetter
 
 from langchain_chroma import Chroma
-# from langchain_community.chat_models import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.documents import Document
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.pydantic_v1 import BaseModel
-from langchain_core.runnables import RunnableLambda, RunnablePassthrough
+from pydantic.v1 import BaseModel
+from langchain_core.runnables import RunnableLambda, RunnablePassthrough, RunnableSequence
 from langchain_experimental.open_clip import OpenCLIPEmbeddings
 from PIL import Image
 from langchain_community.embeddings import SentenceTransformerEmbeddings
 from langchain.memory import ConversationBufferMemory
 
 def resize_base64_image(base64_string, size=(128, 128)):
-    """
-    Resize an image encoded as a Base64 string.
-
-    :param base64_string: A Base64 encoded string of the image to be resized.
-    :param size: A tuple representing the new size (width, height) for the image.
-    :return: A Base64 encoded string of the resized image.
-    """
     img_data = base64.b64decode(base64_string)
     img = Image.open(io.BytesIO(img_data))
     resized_img = img.resize(size, Image.LANCZOS)
@@ -38,12 +30,6 @@ def resize_base64_image(base64_string, size=(128, 128)):
 
 
 def get_resized_images(docs):
-    """
-    Resize images from base64-encoded strings.
-
-    :param docs: A list of base64-encoded image to be resized.
-    :return: Dict containing a list of resized base64-encoded strings.
-    """
     b64_images = []
     for doc in docs:
         if isinstance(doc, Document):
@@ -53,13 +39,6 @@ def get_resized_images(docs):
     return {"images": b64_images}
 
 def img_prompt_func(data_dict, num_images=2):
-    """
-    GPT-4V prompt for image analysis.
-
-    :param data_dict: A dict with images and a user-provided question.
-    :param num_images: Number of images to include in the prompt.
-    :return: A list containing message objects for each image and the text prompt.
-    """
     messages = []
     ref_images = []
     if data_dict["context"]["images"]:
@@ -117,15 +96,6 @@ def answer_text2dict(text):
 
 
 def multi_modal_rag_chain(retriever_text, retriever_image, memory):
-    """
-    Multi-modal RAG chain,
-
-    :param retriever: A function that retrieves the necessary context for the model.
-    :return: A chain of functions representing the multi-modal RAG process.
-    """
-    # Initialize the multi-modal Large Language Model with specific parameters
-    # model = ChatOpenAI(temperature=0, model="gpt-4o-mini", max_tokens=1024)
-
     # model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.0, convert_to_markdown=False)
     model = ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", temperature=0.0, convert_to_markdown=False)
 
@@ -177,7 +147,6 @@ memory = ConversationBufferMemory(return_messages=True)
 chain = multi_modal_rag_chain(retriever_text_mmembd, retriever_image_mmembd, memory)
 
 
-# Add typing for input
 class Question(BaseModel):
     __root__: str
 
