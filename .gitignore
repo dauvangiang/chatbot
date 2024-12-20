@@ -7,3 +7,5 @@ tempCodeRunnerFile.py
 /slides/**
 **/__pycache__/**
 test_rag.ipynb
+/other_context/**
+/audio/output.wav

@@ -4,6 +4,8 @@ from PIL import Image
 from io import BytesIO
 import base64
 from audio.speech_text import *
+from other_context.orther import DICT
+import re
 
 memory.clear()
 
@@ -12,7 +14,12 @@ def gen_response(input_text, audio_input):
         # If an audio input is provided, transcribe it to text
         if audio_input:
             input_text = speech_to_text(audio_input)
-            print("Transcribe success! Text:", input_text)
+
+        pattern = r'[^a-zA-Z0-9\sáàảãáạăằẳẵắặâầẩẫấậéèẻẽéẹêềểễếệíìỉĩíịóòỏõóọôồổỗốộơờởỡớợúùủũúụưừửữứựýỳỹỵỷđ]'
+        tmp = re.sub(pattern, '', input_text.lower()).strip()
+        if (tmp in DICT.keys()):
+            audio_output_path = text_to_speech_gtts(DICT.get(tmp))
+            return DICT.get(tmp), audio_output_path, None, None
 
         out_dict = chain.invoke(input_text)
         out_content = []
@@ -35,29 +42,25 @@ def gen_response(input_text, audio_input):
             img_2_out = Image.open(BytesIO(image_data))
 
         memory.save_context({"input": input_text}, {"output": out_dict["answer"]})
+       
+        out = out_dict["answer"].removeprefix("Trả lời: ")
+        audio_output_path = text_to_speech_gtts(out)
         
-        # Convert the answer to speech
-        audio_output = text_to_speech(out_dict["answer"])
-        # audio_output = text_to_speech("Hello")
-        print(audio_output)
-        
-        return out_content[0], img_1_out, img_2_out, audio_output
+        return out_content[0], audio_output_path, img_1_out, img_2_out
+        # return out_content[0], img_1_out, img_2_out, audio_output
     except Exception as e:
         print(e)
-        return "Something wrong happened. Please try again later.", None, None, None
+        return "Đã có lỗi xảy ra. Vui lòng thử lại sau.", None, None, None
 
-input_text = gr.Textbox(label="Question", placeholder="Enter your question here", lines=2)
+input_text = gr.Textbox(label="Câu hỏi:", placeholder="Nhập câu hỏi ở đây hoặc sử dụng voice chat ở bên dưới...", lines=2)
 
-answer_output = gr.Textbox(label="Answer", interactive=False)
-img_1 = gr.Image(label="Reference Image", interactive=False)
-img_2 = gr.Image(label="Reference Image", interactive=False)
+answer_output = gr.Textbox(label="Câu trả lời:", interactive=False)
+img_1 = gr.Image(label="Ảnh minh họa", interactive=False)
+img_2 = gr.Image(label="Ảnh minh họa", interactive=False)
 # img_3 = gr.Image(label="Reference Image", interactive=False)
 
-audio_input = gr.Audio(type="filepath", label="Voice input", sources=["microphone"])
-audio_output = gr.Audio(label="Voice output")
-    
-# reset_button = gr.Button("Reset Memory")
-# reset_button.click(reset_memory)
+audio_input = gr.Audio(type="filepath", label="Voice chat", sources=["microphone"])
+audio_output = gr.Audio(label="Voice")
 
-demo = gr.Interface(fn=gen_response, inputs=[input_text, audio_input], outputs=[answer_output, img_1, img_2, audio_output])#, img_3])
+demo = gr.Interface(fn=gen_response, inputs=[input_text, audio_input], outputs=[answer_output, audio_output, img_1, img_2])#, img_3])
 demo.launch(share=True)
