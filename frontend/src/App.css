@@ -1,0 +1,90 @@
+body {
+  background-color: #ffffff;
+}
+
+.chat-window {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  height: 500px;
+  overflow-y: auto;
+  background-color: #2a2a2a;
+}
+
+.chat-messages {
+  margin-bottom: 15px;
+}
+
+.message {
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+}
+
+.user-name {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.user {
+  background-color: #007bff;
+  color: white;
+  text-align: right;
+  align-self: flex-end;
+  border-radius: 10px 10px 0 10px;
+}
+
+.bot {
+  background-color: #ffffff;
+  color: black;
+  text-align: left;
+  align-self: flex-start;
+  border-radius: 10px 10px 10px 0;
+}
+
+.input-group {
+  position: relative;
+}
+
+.loading-animation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px; /* Khoảng cách giữa các ảnh */
+  /* height: 100vh; Căn giữa màn hình */
+  width: fit-content;
+  background-color: #f8f9fa; /* Màu nền */
+}
+
+.loading-image {
+  width: 7px; /* Kích thước mặc định */
+  height: 7px;
+  object-fit: cover; /* Giữ tỷ lệ ảnh */
+  animation: zoom 1.5s ease-in-out infinite;
+  border-radius: 50%;
+}
+
+.animation-1 {
+  animation-delay: 0s;
+}
+
+.animation-2 {
+  animation-delay: 0.5s;
+}
+
+.animation-3 {
+  animation-delay: 1s;
+}
+
+@keyframes zoom {
+  0%, 100% {
+    transform: scale(1); /* Kích thước ban đầu */
+  }
+  50% {
+    transform: scale(2.0); /* Zoom to */
+  }
+}

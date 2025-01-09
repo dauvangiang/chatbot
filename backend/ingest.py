@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pypdfium2 as pdfium
 from langchain_chroma import Chroma
-from langchain_experimental.open_clip import OpenCLIPEmbeddings  # Add OpenCLIP
+from langchain_experimental.open_clip import OpenCLIPEmbeddings
 from langchain_community.embeddings import SentenceTransformerEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
@@ -46,15 +46,9 @@ def get_images_from_pdf_2(pdf_dir, img_dump_path):
             pil_image = bitmap.to_pil()
             pil_image.save(f"{img_dump_path}/{pdf_file[:-4]}_img_{page_number + 1}.jpg", format="JPEG")
 
-# Load PDF
-# doc_path = Path(__file__).parent / "docs/SIC_AI_Chapter1.pdf"
-# img_dump_path = Path(__file__).parent / "docs/"
+doc_path = "./assets/slides/"
+img_dump_path = "./assets/images/"
 
-doc_path = "./slides/"
-img_dump_path = "./images/"
-
-# rel_doc_path = doc_path.relative_to(Path.cwd())
-# rel_img_dump_path = img_dump_path.relative_to(Path.cwd())
 pil_images = get_images_from_pdf_2(doc_path, img_dump_path)
 vectorstore_text = Path(__file__).parent / "chroma_db_multi_modal_text"
 re_vectorstore_text_path = vectorstore_text.relative_to(Path.cwd())
@@ -99,10 +93,6 @@ for pdf_file in pdf_files:
     loaded_docs = loader.load()
     # print(f"Loaded documents for {pdf_file}: {len(loaded_docs)}")
     docs.extend(loaded_docs)
-
-# print("========Docs========")
-# for doc in docs:
-    # print(doc.page_content[:100])
 
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=100)
 splits = text_splitter.split_documents(docs)

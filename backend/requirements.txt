@@ -1,6 +1,6 @@
 fastapi[all]
 langchain
-langchain-chroma
+langchain-chroma==0.1.4
 langchain-community
 langchain-core
 langchain-openai
@@ -13,7 +13,7 @@ tqdm
 pdfminer-six
 python-docx
 loguru
-chromadb
+chromadb==0.5.23
 Unidecode
 langserve[all]
 pillow
@@ -21,3 +21,9 @@ torch
 whisper
 pyttsx3
 pyaudio
+numpy==1.26.0
+tokenizers==0.20.3
+grpcio==1.68.1
+grpcio-status==1.68.1
+grpcio-tools==1.68.1
+sentence-transformers

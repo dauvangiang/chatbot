@@ -1,0 +1,6 @@
+.env
+/assets/**
+tempCodeRunnerFile.py
+.gradio
+/chroma_db_*/**
+**/__pycache__/**

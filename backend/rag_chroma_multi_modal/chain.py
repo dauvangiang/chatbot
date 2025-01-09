@@ -34,7 +34,8 @@ def get_resized_images(docs):
     for doc in docs:
         if isinstance(doc, Document):
             doc = doc.page_content
-        resized_image = resize_base64_image(doc, size=(1280, 720))
+        # resized_image = resize_base64_image(doc, size=(1280, 720))
+        resized_image = resize_base64_image(doc, size=(1280, 1080))
         b64_images.append(resized_image)
     return {"images": b64_images}
 
@@ -58,17 +59,35 @@ def img_prompt_func(data_dict, num_images=2):
         elif isinstance(message, AIMessage):
             messages.append({"type": "text", "text": f"Assistant: {message.content}"})
 
+    # text_message = {
+    #     "type": "text",
+    #     "text": (
+    #         "Bạn là một chuyên gia phân tích, nhiệm vụ của bạn là trả lời các câu hỏi về nội dung trực quan.\n"
+    #         "Bạn sẽ được cung cấp một hoặc nhiều hình ảnh từ một bộ slide trình bày.\n"
+    #         f"Bạn có thể có thêm thông tin từ văn bản của bộ slide đó. Hãy sử dụng tất cả thông tin có sẵn và lịch sử trò chuyện để trả lời câu hỏi của người dùng.\n"
+    #         "Câu hỏi của người dùng sẽ là một câu hỏi dạng văn bản hoặc câu hỏi trắc nghiệm và định dạng đầu ra mong đợi như sau:\n"
+    #         '''
+    #         ```response
+    #         Trả lời: <câu trả lời đúng>
+    #         Giải thích: <giải thích tại sao đáp án đó đúng>
+    #         ```
+    #         '''
+    #         f"Câu hỏi của người dùng: {data_dict['question']}\n\n"
+    #     ),
+    # }
     text_message = {
         "type": "text",
         "text": (
-            "Bạn là một chuyên gia phân tích, nhiệm vụ của bạn là trả lời các câu hỏi về nội dung trực quan.\n"
+            "Bạn là một chuyên gia phân tích, nhiệm vụ của bạn là trả lời các câu hỏi của người dùng.\n"
             "Bạn sẽ được cung cấp một hoặc nhiều hình ảnh từ một bộ slide trình bày.\n"
             f"Bạn có thể có thêm thông tin từ văn bản của bộ slide đó. Hãy sử dụng tất cả thông tin có sẵn và lịch sử trò chuyện để trả lời câu hỏi của người dùng.\n"
+            "Nếu không tìm thấy thông tin từ tài liệu được cung cấp, bạn hãy sử dụng sự hiểu biết của mình để trả lời câu hỏi. Và hãy trả lời một cách chính xác nhất.\n"
+            "Nếu bạn vẫn không thể tìm ra câu trả lời, hãy thông báo cho người dùng biết rằng không có thông tin liên quan mà người dùng cần tìm.\n"
             "Câu hỏi của người dùng sẽ là một câu hỏi dạng văn bản hoặc câu hỏi trắc nghiệm và định dạng đầu ra mong đợi như sau:\n"
             '''
             ```response
-            Trả lời: <câu trả lời đúng>
-            Giải thích: <giải thích tại sao đáp án đó đúng>
+            <Câu trả lời đúng>.
+            <Giải thích tại sao đáp án đó đúng>
             ```
             '''
             f"Câu hỏi của người dùng: {data_dict['question']}\n\n"

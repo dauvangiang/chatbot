@@ -4,7 +4,7 @@ from PIL import Image
 from io import BytesIO
 import base64
 from audio.speech_text import *
-from other_context.orther import DICT
+from assets.other_context.orther import DICT
 import re
 
 memory.clear()
@@ -62,5 +62,12 @@ img_2 = gr.Image(label="Ảnh minh họa", interactive=False)
 audio_input = gr.Audio(type="filepath", label="Voice chat", sources=["microphone"])
 audio_output = gr.Audio(label="Voice")
 
-demo = gr.Interface(fn=gen_response, inputs=[input_text, audio_input], outputs=[answer_output, audio_output, img_1, img_2])#, img_3])
-demo.launch(share=True)
+demo = gr.Interface(
+    fn=gen_response, 
+    inputs=[input_text, audio_input], 
+    outputs=[answer_output, audio_output, img_1, img_2],
+    title="AI Mentors | HopeAI",
+    theme="theNeofr/Syne"
+)
+
+demo.launch(favicon_path="favicon.ico")
