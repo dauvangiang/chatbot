@@ -94,7 +94,6 @@ const Body = ({ isInit, setIsInit }) => {
             if (chat.isUser) {
               return (
                 <div className="user_input ms-auto bg-primary bg-gradient text-white mb-4 border rounded-2 p-1" style={{ maxWidth: "75%", width: "auto" }}>
-                  fjhfhdfsjghjdfhbiodf
                 </div>
               )
             } else {

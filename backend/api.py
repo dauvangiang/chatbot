@@ -5,7 +5,7 @@ from typing import Optional
 from PIL import Image
 from io import BytesIO
 import base64
-from audio.speech_text import speech_to_text, text_to_speech_gtts  # Assuming these are in 'audio/speech_text.py'
+# from audio.speech_text import speech_to_text, text_to_speech_gtts  # Assuming these are in 'audio/speech_text.py'
 from assets.other_context.orther import DICT  # Assuming this is in 'other_context/orther.py'
 from rag_chroma_multi_modal.chain import chain, memory # Assuming this is where your chain and memory are defined
 import re
@@ -25,8 +25,8 @@ def gen_response_logic(input_text: Optional[str] = None, audio_input_path: Optio
             pattern = r'[^a-zA-Z0-9\sáàảãáạăằẳẵắặâầẩẫấậéèẻẽéẹêềểễếệíìỉĩíịóòỏõóọôồổỗốộơờởỡớợúùủũúụưừửữứựýỳỹỵỷđ]'
             tmp = re.sub(pattern, '', input_text.lower()).strip()
             if (tmp in DICT.keys()):
-                audio_output_path = text_to_speech_gtts(DICT.get(tmp))
-                return DICT.get(tmp), audio_output_path, None, None
+                # audio_output_path = text_to_speech_gtts(DICT.get(tmp))
+                return DICT.get(tmp), None, None, None
 
             out_dict = chain.invoke(input_text)
             out_content = []
