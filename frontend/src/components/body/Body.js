@@ -72,12 +72,14 @@ const Body = ({ isInit, setIsInit }) => {
     }
   };
 
-  if (chats.length == 0 || !isInit) {
+  console.log(chats)
+
+  if (chats.length === 0 || !isInit) {
     return (
       <>
         <div className="d-flex flex-column mt-3 bg-light ms-3 me-3" style={{ height: "85vh" }}>
           <div className="d-flex flex-column align-items-center m-auto">
-            <img className="border border-5 border-success rounded-circle mb-2" style={{width: "97px"}} src={bot_icon}></img>
+            <img className="border border-5 border-success rounded-circle mb-2" style={{width: "97px"}} src={bot_icon} alt="Logo"></img>
             <strong>Tôi có thể giúp gì cho bạn?</strong>
           </div>
           <ChatBox onSendMessage={handleSendMessage} />
@@ -113,13 +115,14 @@ const ChatOutput = ({ text, audioPath, base64Img1, base64Img2, playAudio, audioR
   return (
     <>
       <div className="bot_output d-flex mb-4 border rounded-2 bg-body-secondary text-black p-1" style={{ maxWidth: "75%" }}>
-        <img className="me-1 rounded-4" src={bot_icon} style={{ width: "8%", height: "8%", maxWidth: "50px", maxHeight: "50px" }}></img>
+        <img className="me-1 rounded-4" src={bot_icon} style={{ width: "8%", height: "8%", maxWidth: "50px", maxHeight: "50px" }} alt="Logo"></img>
         <div className="output">
-          <div className="">{text}</div>
+          {/* Render HTML từ text */}
+          <div className="" dangerouslySetInnerHTML={{ __html: text }}></div>
 
           {/* Audio */}
           <div className="p-1" onClick={playAudio}>
-            <i class="fa-solid fa-volume-high" style={{ fontSize: "14px" }}></i>
+            <i className="fa-solid fa-volume-high" style={{ fontSize: "14px" }}></i>
           </div>
           <audio ref={audioRef} src={audioPath} onEnded={() => setIsPlaying(false)} />
 

@@ -80,6 +80,10 @@ body {
   animation-delay: 1s;
 }
 
+.rendered-text p {
+  margin-bottom: 6px; /* Khoảng cách trên và dưới */
+}
+
 @keyframes zoom {
   0%, 100% {
     transform: scale(1); /* Kích thước ban đầu */

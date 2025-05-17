@@ -206,7 +206,7 @@ const ChatOutput = ({ chat, playAudio }) => {
       <div className="bot_output d-flex mb-4 border rounded-2 bg-body-secondary text-black p-1" style={{ minWidth: "320px", maxWidth: "600px", width: "fit-content" }}>
         <img className="me-1 rounded-4" src={bot_icon} style={{ width: "28px", height: "28px" }}></img>
         <div className="output">
-          <div className="">{text}</div>
+          <div className="rendered-text" dangerouslySetInnerHTML={{ __html: text }}></div>
 
           {/* Audio */}
           {playing ? (
@@ -216,7 +216,7 @@ const ChatOutput = ({ chat, playAudio }) => {
           )
             : (
               <div className="p-1 mb-1" style={{ cursor: "pointer" }} onClick={e => play(text)}>
-                <i class="fa-solid fa-volume-high" style={{ fontSize: "12px" }}></i>
+                <i className="fa-solid fa-volume-high" style={{ fontSize: "12px" }}></i>
               </div>
             )}
 
@@ -229,7 +229,7 @@ const ChatOutput = ({ chat, playAudio }) => {
                   onClick={() => openFullScreen(`data:image/png;base64,${base64Img1}`)}
                 />
                 <i
-                  class="fa-solid fa-download position-absolute"
+                  className="fa-solid fa-download position-absolute"
                   style={{ right: "10px", bottom: "10px", cursor: "pointer", fontSize: "12px" }}
                   onClick={() => downloadImage(`data:image/png;base64,${base64Img1}`)}
                 ></i>
@@ -243,7 +243,7 @@ const ChatOutput = ({ chat, playAudio }) => {
                   onClick={() => openFullScreen(`data:image/png;base64,${base64Img2}`)}
                 />
                 <i
-                  class="fa-solid fa-download position-absolute"
+                  className="fa-solid fa-download position-absolute"
                   style={{ right: "10px", bottom: "10px", cursor: "pointer", fontSize: "12px" }}
                   onClick={() => downloadImage(`data:image/png;base64,${base64Img2}`)}
                 ></i>

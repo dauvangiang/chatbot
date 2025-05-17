@@ -12,6 +12,7 @@ import re
 from fastapi.responses import RedirectResponse
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+import traceback
 
 memory.clear() # Clear memory when the API starts
 
@@ -59,8 +60,11 @@ def gen_response_logic(input_text: Optional[str] = None, audio_input_path: Optio
         else:
             return "Vui lòng nhập câu hỏi.", None, None, None
     except Exception as e:
-        print(e)
-        return "Đã có lỗi xảy ra. Vui lòng thử lại sau.", None, None, None
+        # print(e)
+        # return "Đã có lỗi xảy ra. Vui lòng thử lại sau.", None, None, None
+        print("Chain Error:", e)
+        traceback.print_exc()
+        return "Lỗi khi thực thi chuỗi RAG: " + str(e), None, None, None
 
 app = FastAPI()
 

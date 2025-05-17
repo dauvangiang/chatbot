@@ -8,7 +8,8 @@ from pathlib import Path
 import pypdfium2 as pdfium
 from langchain_chroma import Chroma
 from langchain_experimental.open_clip import OpenCLIPEmbeddings
-from langchain_community.embeddings import SentenceTransformerEmbeddings
+# from langchain_community.embeddings import SentenceTransformerEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 
@@ -57,7 +58,8 @@ vectorstore_image = Path(__file__).parent / "chroma_db_multi_modal_image"
 re_vectorstore_image_path = vectorstore_image.relative_to(Path.cwd())
 
 # Load embedding function for text
-text_embedding = SentenceTransformerEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+# text_embedding = SentenceTransformerEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+text_embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
 
 # Load embedding function for images
 image_embedding = OpenCLIPEmbeddings(model_name="ViT-L-14", checkpoint="openai")  # Use OpenCLIP for images
